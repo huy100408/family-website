@@ -3,114 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My 3-Generation Family</title>
+    <title>Family Tree</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.12.0/cdn.min.js" defer></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            text-align: center;
+        }
+        .family-member {
+            cursor: pointer;
+            display: inline-block;
+            padding: 10px;
+            margin: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+        .family-member:hover {
+            transform: scale(1.1);
+            background-color: #45a049;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            transform: scale(0.8);
+            animation: morph 0.3s forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes morph {
+            from { transform: scale(0.8); }
+            to { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <h1 class="text-3xl font-bold">Family Tree</h1>
+    
+    <div class="mt-6">
+        <div class="family-member" onclick="showBio('ba')">Ba</div>
+        <div class="family-member" onclick="showBio('coLien')">Cô Liên</div>
+        <div class="family-member" onclick="showBio('bacLoc')">Bác Lộc</div>
+        <div class="family-member" onclick="showBio('bacDung')">Bác Dũng</div>
+        <div class="family-member" onclick="showBio('bin')">Bin</div>
+        <div class="family-member" onclick="showBio('bu')">Bu</div>
+        <div class="family-member" onclick="showBio('haiBon')">Hai Bôn</div>
+        <div class="family-member" onclick="showBio('haiLong')">Hai Long</div>
+        <div class="family-member" onclick="showBio('chiNhu')">Chị Như</div>
+        <div class="family-member" onclick="showBio('chiVy')">Chị Vy</div>
+        <div class="family-member" onclick="showBio('utAn')">Út Ân</div>
+        <div class="family-member" onclick="showBio('chiBi')">Chị Bi</div>
+        <div class="family-member" onclick="showBio('chiBonBon')">Chị Bòn Bon</div>
+        <div class="family-member" onclick="showBio('chiBo')">Chị Bo</div>
+    </div>
+    
+    <div id="bioModal" class="modal flex">
+        <div class="modal-content">
+            <h2 id="bioTitle" class="text-2xl font-bold"></h2>
+            <p id="bioText" class="mt-2"></p>
+            <button onclick="closeModal()" class="mt-4 px-4 py-2 bg-red-500 text-white rounded">Close</button>
+        </div>
+    </div>
+    
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            if (!localStorage.getItem("users")) {
-                localStorage.setItem("users", JSON.stringify([{ username: "Admin", password: "100408", isAdmin: true }]));
-            }
-            if (!localStorage.getItem("bios")) {
-                localStorage.setItem("bios", JSON.stringify({
-                    banoi: "Bà nội là một người rất yêu thương con cháu. Mỗi lần mọi người đến chơi, bà nội dù đã già nhưng vẫn rất sung sức và chơi với các con cháu.",
-                    ongnoi: "Ông nội mặc dù đã mất rất lâu nhưng em vẫn yêu quý ông và cảm thấy tuyệt vời khi ông đã lấy bà nội làm vợ.",
-                    ba: "Ba em là con trai út của gia đình và ba em rất đẹp trai và tài giỏi. Ba em đã điều hành một công ty khá lớn và rất thương em.",
-                    coLien: "Cô Liên là một người rất hiền, có nhà biệt thự tại Đà Nẵng.",
-                    bacLoc: "Bác Lộc là con trai giữa trong gia đình, điều hành một công ty chuyên về máy chiếu.",
-                    bacDung: "Bác Dũng là anh cả trong gia đình bà nội em. Bác cùng với vợ buôn bán máy in và có một tiệm bán mì Quảng.",
-                    bin: "Bin là con trai giữa của ba em, rất đẹp trai, chơi đá banh giỏi và là người đã phát triển trang web này.",
-                    bu: "Bu là công chúa của ba em, con út trong gia đình. Bu rất đẹp gái nhưng tính cách thì sư tử.",
-                    haiBon: "Hai Bôn là con cả trong gia đình em, rất đẹp trai nhưng hơi nhiều mụn. Hai biết code nhưng làm quản lý kinh doanh và hiện làm tại công ty của ba em.",
-                    haiLong: "Hai Long là người em hỏi bất cứ thứ gì về lập trình. Hiện đang làm tại FPT, là một lập trình viên và game thủ LOL."
-                }));
-            }
-        });
+        const bios = {
+            ba: "Ba em là con trai út của gia đình và ba em rất đẹp trai và tài giỏi. Ba em đã điều hành một công ty cũng khá lớn. Ba em rất thương em.",
+            coLien: "Cô Liên là một người rất hiền cô Liên có nhà biệt thự tại Đà Nẵng.",
+            bacLoc: "Bác Lộc là con trai giữa trong gia đình. Bác Lộc cũng đang điều hành một công ty và chuyên về máy chiếu.",
+            bacDung: "Bác Dũng là anh cả trong gia đình Bà nội em. Bác Dũng cùng với vợ buôn bán máy in và có một tiệm bán mì Quảng.",
+            bin: "Bin là con trai giữa của ba em rất đẹp trai chơi đá banh giỏi và là người dev ra cái web này.",
+            bu: "Bu là công chúa của ba em là con út của ba em. Bu thì cũng đẹp gái nhưng tính cách thì sư tử.",
+            haiBon: "Hai Bôn là con cả trong gia đình em. Hai rất đẹp trai có điều hơi nhiều mụn. Cũng biết code nhưng dùng làm cho quản lý kinh doanh. Hiện đang làm tại công ty của ba em điều hành.",
+            haiLong: "Hai Long là người em hỏi bất cứ thứ gì về lập trình. Hai đang làm tại FPT là một lập trình viên và game thủ LOL. Hai Long là con cả của bác Lộc.",
+            chiNhu: "Chị Như là con của cô Liên. Chị Như là nhà tài trợ trà sữa kim cương để em 49kg và là người rất hiền cũng rất đẹp gái nhất trái đất. Đang làm bán thanh long cho Ấn Độ.",
+            chiVy: "Chị Vy là con giữa của Bác Lộc. Chị Vy đang làm tại tiệm trà sữa cũng rất ngon và cũng là một game thủ LOL.",
+            utAn: "Út Ân là người em thân nhất, Út Ân với em đều đi tắm chung khi có thể. Út Ân với em rất thân với nhau. Út Ân là con út của bác Lộc.",
+            chiBi: "Chị Bi là người cũng rất đẹp gái, đang đi du học và làm việc tại Úc. Chị Bi là con cả của bác Dũng.",
+            chiBonBon: "Chị Bòn Bon là người sờ má của em nhiều nhất. Chị Bòn Bon là con út của bác Dũng.",
+            chiBo: "Chị Bo rất hiền và có một căn nhà to bự ở Úc."
+        };
 
-        function login() {
-            const username = document.getElementById("login-username").value;
-            const password = document.getElementById("login-password").value;
-            let users = JSON.parse(localStorage.getItem("users"));
-            const user = users.find(u => u.username === username && u.password === password);
-            if (user) {
-                localStorage.setItem("loggedInUser", JSON.stringify(user));
-                alert("Login successful!");
-                if (user.isAdmin) {
-                    window.location.href = "admin.html";
-                } else {
-                    window.location.href = "index.html";
-                }
-            } else {
-                alert("Invalid credentials!");
-            }
+        function showBio(name) {
+            document.getElementById("bioTitle").innerText = name;
+            document.getElementById("bioText").innerText = bios[name];
+            document.getElementById("bioModal").style.display = "flex";
         }
-
-        function showBio(member) {
-            const bios = JSON.parse(localStorage.getItem("bios"));
-            document.getElementById("bio-title").innerText = member.replace(/([A-Z])/g, ' $1').trim();
-            document.getElementById("bio-content").innerText = bios[member];
-            document.getElementById("bio").classList.remove("hidden");
-            
-            if (JSON.parse(localStorage.getItem("loggedInUser"))?.isAdmin) {
-                document.getElementById("edit-bio").classList.remove("hidden");
-                document.getElementById("edit-bio-content").value = bios[member];
-                document.getElementById("save-bio").onclick = function() { saveBio(member); };
-            } else {
-                document.getElementById("edit-bio").classList.add("hidden");
-            }
-        }
-
-        function saveBio(member) {
-            let bios = JSON.parse(localStorage.getItem("bios"));
-            bios[member] = document.getElementById("edit-bio-content").value;
-            localStorage.setItem("bios", JSON.stringify(bios));
-            alert("Biography updated successfully!");
-            showBio(member);
-        }
-
-        function toggleAbout() {
-            document.getElementById("about-section").classList.toggle("hidden");
+        function closeModal() {
+            document.getElementById("bioModal").style.display = "none";
         }
     </script>
-</head>
-<body class="bg-gradient-to-r from-blue-400 via-green-500 to-yellow-500 flex flex-col items-center min-h-screen p-5 text-white">
-    <h1 class="text-5xl font-extrabold mb-6">Welcome to My 3-Generation Family</h1>
-    <div id="bio" class="bg-white p-6 rounded-lg shadow-lg text-black w-full max-w-4xl mt-4 hidden">
-        <h2 id="bio-title" class="text-3xl font-bold mb-3"></h2>
-        <p id="bio-content"></p>
-        <div id="edit-bio" class="hidden">
-            <textarea id="edit-bio-content" class="w-full p-2 border rounded"></textarea>
-            <button id="save-bio" class="mt-2 bg-blue-500 text-white p-2 rounded">Save</button>
-        </div>
-    </div>
-    <button class="about-me bg-white p-3 rounded-lg shadow-md text-black mt-6" onclick="toggleAbout()">
-        <img class="profile-pic w-16 h-16 rounded-full" src="data:image/png;base64,YOUR_BASE64_IMAGE_HERE" alt="Profile Picture">
-        <h2>About Me</h2>
-    </button>
-    <div id="about-section" class="bg-white p-6 rounded-lg shadow-lg text-black w-full max-w-4xl mt-6 hidden">
-        <h2 class="text-3xl font-bold mb-3">Huy Nguyen</h2>
-        <p>🎓 Student at <a href="https://cis.edu.vn/vi" target="_blank" class="text-blue-500">Canadian International School (CIS)</a></p>
-        <p>📧 Email: <a href="mailto:cis2300992@students.cis.edu.vn" class="text-blue-500">cis2300992@students.cis.edu.vn</a></p>
-        <p>📞 Phone: 0819446263</p>
-        <div class="links">
-            <a href="https://www.facebook.com/huy.nguyen.490553/" target="_blank" class="text-blue-500">📘 Facebook</a>
-        </div>
-        <div id="family-bios" class="bg-white p-4 rounded shadow"></div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        let bios = JSON.parse(localStorage.getItem("bios")) || {};
-        let bioSection = document.getElementById("family-bios");
-
-        for (let key in bios) {
-            bioSection.innerHTML += `
-                <div class="p-2 border-b">
-                    <h3 class="font-bold">${key}</h3>
-                    <p>${bios[key]}</p>
-                </div>`;
-        }
-    });
-</script>
-    </div>
 </body>
 </html>

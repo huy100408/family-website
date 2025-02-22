@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("login-form").addEventListener("submit", function(event) {
+                event.preventDefault();
+                let username = document.getElementById("username").value;
+                let password = document.getElementById("password").value;
+                let users = JSON.parse(localStorage.getItem("users")) || [];
+                
+                let user = users.find(u => u.username === username && u.password === password);
+                if (user) {
+                    localStorage.setItem("loggedInUser", JSON.stringify(user));
+                    window.location.href = "admin.html";
+                } else {
+                    alert("Invalid username or password");
+                }
+            });
+        });
+    </script>
+</head>
+<body class="bg-gray-100 p-5">
+    <h1 class="text-3xl font-bold mb-4">Login</h1>
+    <form id="login-form" class="bg-white p-6 rounded shadow-md">
+        <input type="text" id="username" placeholder="Username" class="w-full p-2 border rounded mb-3">
+        <input type="password" id="password" placeholder="Password" class="w-full p-2 border rounded mb-3">
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Login</button>
+    </form>
+</body>
+</html>

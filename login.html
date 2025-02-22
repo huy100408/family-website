@@ -6,27 +6,31 @@
     <title>Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center h-screen">
-    <div class="bg-white p-6 rounded shadow-md w-96">
-        <h2 class="text-2xl font-bold mb-4">Admin Login</h2>
-        <input id="username" type="text" placeholder="Username" class="w-full p-2 border mb-2">
-        <input id="password" type="password" placeholder="Password" class="w-full p-2 border mb-2">
-        <button onclick="login()" class="bg-blue-500 text-white p-2 w-full">Login</button>
+<body class="flex items-center justify-center h-screen bg-gray-100">
+    <div class="bg-white p-6 rounded shadow-lg w-96">
+        <h2 class="text-2xl font-bold mb-4">Login</h2>
+        <input id="login-username" type="text" placeholder="Username" class="w-full p-2 mb-2 border rounded">
+        <input id="login-password" type="password" placeholder="Password" class="w-full p-2 mb-2 border rounded">
+        <button onclick="login()" class="w-full bg-green-500 text-white p-2 rounded">Log In</button>
+        <p class="mt-2 text-sm">Don't have an account? <a href="signup.html" class="text-blue-500">Sign up</a></p>
     </div>
 
     <script>
         function login() {
-            let username = document.getElementById("username").value;
-            let password = document.getElementById("password").value;
-            let users = JSON.parse(localStorage.getItem("users")) || [];
+            let username = document.getElementById("login-username").value;
+            let password = document.getElementById("login-password").value;
 
-            let user = users.find(u => u.username === username && u.password === password);
-            if (user) {
-                localStorage.setItem("loggedInUser", JSON.stringify(user));
-                window.location.href = "admin.html";
-            } else {
-                alert("Invalid credentials!");
+            let users = JSON.parse(localStorage.getItem("users")) || [];
+            let user = users.find(user => user.username === username && user.password === password);
+
+            if (!user) {
+                alert("Invalid username or password.");
+                return;
             }
+
+            localStorage.setItem("loggedInUser", JSON.stringify(user));
+            alert("Login successful!");
+            window.location.href = user.isAdmin ? "admin.html" : "index.html";
         }
     </script>
 </body>

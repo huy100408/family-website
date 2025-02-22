@@ -95,6 +95,22 @@
         <div class="links">
             <a href="https://www.facebook.com/huy.nguyen.490553/" target="_blank" class="text-blue-500">📘 Facebook</a>
         </div>
+        <div id="family-bios" class="bg-white p-4 rounded shadow"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let bios = JSON.parse(localStorage.getItem("bios")) || {};
+        let bioSection = document.getElementById("family-bios");
+
+        for (let key in bios) {
+            bioSection.innerHTML += `
+                <div class="p-2 border-b">
+                    <h3 class="font-bold">${key}</h3>
+                    <p>${bios[key]}</p>
+                </div>`;
+        }
+    });
+</script>
     </div>
 </body>
 </html>

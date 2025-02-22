@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if (!localStorage.getItem("users")) {
+                localStorage.setItem("users", JSON.stringify([{ username: "Huy100408", password: "100408", isAdmin: true }]));
+            }
+            loadUsers();
+            loadBios();
+        });
+
+        function loadUsers() {
+            let users = JSON.parse(localStorage.getItem("users"));
+            let userList = document.getElementById("user-list");
+            userList.innerHTML = "";
+            users.forEach((user, index) => {
+                userList.innerHTML += `<li class='p-2 border-b'>${user.username} (${user.isAdmin ? 'Admin' : 'User'})</li>`;
+            });
+        }
+
+        function loadBios() {
+            let bios = JSON.parse(localStorage.getItem("bios"));
+            let bioList = document.getElementById("bio-list");
+            bioList.innerHTML = "";
+            for (let key in bios) {
+                bioList.innerHTML += `<li class='p-2 border-b'><strong>${key}</strong>: ${bios[key]}</li>`;
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 p-5">
+    <h1 class="text-3xl font-bold mb-4">Admin Panel</h1>
+    <h2 class="text-xl font-semibold">User Management</h2>
+    <ul id="user-list" class="bg-white p-4 rounded shadow"></ul>
+
+    <h2 class="text-xl font-semibold mt-6">Biography Management</h2>
+    <ul id="bio-list" class="bg-white p-4 rounded shadow"></ul>
+</body>
+</html>
